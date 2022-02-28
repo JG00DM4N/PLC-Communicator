@@ -1,8 +1,10 @@
+""" This section of code controls all I/O to the PLC. """
+
 import modbus_tk.defines as cst
 import modbus_tk.modbus_tcp as modbus_tcp
 
 def get_plc_status(plc, side):
-
+    """ Checks PLC and returns a status value. """
     try:
         connection = modbus_tcp.TcpMaster(host=plc["IP"], port=502, timeout_in_sec=5.0)
         connection.open
@@ -27,6 +29,7 @@ def get_plc_status(plc, side):
 
 
 def start_plc(plc, side):
+    """ Starts the requested side of a PLC. """
     a_or_b = 1 if side == "a" else 13 # 1 is start bit for A side, 13 for B side
     try:
         connection = modbus_tcp.TcpMaster(host=plc["IP"], port=502, timeout_in_sec=5.0)
@@ -38,6 +41,7 @@ def start_plc(plc, side):
         return False
 
 def stop_plc(plc, side):
+    """ Stops the requested side of a PLC. """
     a_or_b = 79 if side == "a" else 80 # 79 is reset bit for A side, 80 for b side
     try:
         connection = modbus_tcp.TcpMaster(host=plc["IP"], port=502, timeout_in_sec=5.0)
@@ -49,6 +53,9 @@ def stop_plc(plc, side):
         return
 
 def key_press(plc, side, key_pressed, button_state):
+    """ Presses PLC 'Key' on the PLC for selected side. """
+
+    # Key value maps to the values in the following dictionary.
     keymap = {"a":
                 {"SK1":109,
                  "SK2":110,
@@ -121,8 +128,12 @@ def key_press(plc, side, key_pressed, button_state):
             return
 
 def get_info(plc):
+    """ Return information for the selected PLC. """
+
+    # Values to send to PLC to get required information.
     registers = [0,1,5,3]
     longs = [28705,28704,28696,28697]
+
     try:
         connection = modbus_tcp.TcpMaster(host=plc["IP"], port=502, timeout_in_sec=5.0)
         connection.open
@@ -137,6 +148,7 @@ def get_info(plc):
         return
 
 def reset(plc,reset_item):
+    """ Reset required register values in PLC. """
     try:
         connection = modbus_tcp.TcpMaster(host=plc["IP"], port=502, timeout_in_sec=5.0)
         connection.open

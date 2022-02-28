@@ -6,6 +6,7 @@ from command_plc import *
 from functools import partial
 
 class PLCInfo():
+    """ Class for Displaying PLC information to the user. """
     def __init__(self, parent, plclist) -> None:
         self.pwindow = Toplevel(parent)
         self.pwindow.attributes('-topmost',True)
@@ -25,29 +26,31 @@ class PLCInfo():
         self.info_frame.pack(side=BOTTOM)
 
     def convert_to_dec(self,hexvalue):
+        """ Hexadecimal convertion (register response from PLC is sent in 2 part HEX values. """
         hex1 = hex(hexvalue[0])
         hex2 = hex(hexvalue[1])
-        hex1 = hex1.replace("0x","")
-        hex2 = hex2.replace("0x","")
+        hex1 = hex1.replace("0x","") # Remove the "0x" if part of response from PLC.
+        hex2 = hex2.replace("0x","") # Remove the "0x" if part of response from PLC.
         totalhex = hex2 + hex1
         return int(totalhex,16)
 
     def reset_value(self,reset_value):
+        """ Processed reseting some of the PLC register values. """
         MsgBox = messagebox.askquestion('Reset Value','Are you sure you want to reset this value?',icon='warning',parent=self.pwindow)
         if MsgBox == 'yes':
             reset(self.plclist[self.selected_PLC.get()],reset_value)
             self.info_frame.destroy()
             self.get_PLC_info(None)
-
         return
        
     def get_PLC_info(self,event):
+        """ Display the requested PLC information to the user. """
         font = ("Comic Sans MS", 20, "bold")
         selected_PLC = self.selected_PLC.get()
         plc = self.plclist[selected_PLC]
         PLC_info = get_info(plc)
 
-        self.info_frame.destroy()
+        self.info_frame.destroy() # Destroy LabelFrame every time to make sure all info is cleared for next PLC.
         self.info_frame = LabelFrame(self.pwindow)
         self.info_frame.pack(side=BOTTOM)
         gradeA = Label(self.info_frame, text="Side A Current Grade: " + str(PLC_info[0]), font=font)
