@@ -13,3 +13,5 @@ PLC_Communicator.py -> The main application, showing the status of all PLCs. Use
 
 plclist.txt -> External file to store IDs and IPs of each PLC. That way if an ID or IP changes, only this file needed changed.
 
+setup.py -> Used to create .exe file. Uses py2exe library.
+
